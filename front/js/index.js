@@ -1,14 +1,24 @@
+//--------------------------------------------------------------------------
+// Fonction qui récupère de l'API via fletch
+//--------------------------------------------------------------------------
+
 async function getData() {
-    let result = await fetch("http://localhost:3000/api/products");
-    if (!result.ok) {
-        console.log (error);
-    } else {
-    return await result.json();}
+    let url = "http://localhost:3000/api/products";
+    try {
+        let res = await fetch(url);
+        return await res.json();
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-async function renderArrayData() {
+//--------------------------------------------------------------------------
+// Fonction qui récupère les données de l'API afin de les restituer dans l'HTML de l'index 
+//--------------------------------------------------------------------------
+
+async function renderData() {
     let data = await getData();
-    let html = '';
+    let html = " ";
     data.forEach(data => {
         let htmlSegment = `<a href="./product.html?id=${data._id}">
                             <article>
@@ -16,12 +26,12 @@ async function renderArrayData() {
                             <h3 class="productName">${data.name}</h3>
                             <p class="productDescription">${data.description}</p>
                             </article>
-                            <a>`;
+                            </a>`;
         html += htmlSegment;
     });
 
-    let container = document.querySelector('.items');
+    let container = document.querySelector("#items");
     container.innerHTML = html;
 }
 
-renderArrayData();
+renderData();
