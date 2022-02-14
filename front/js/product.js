@@ -24,7 +24,7 @@ async function getProductData() {
 //--------------------------------------------------------------------------
 // Fonction qui récupère les informations du produit
 //--------------------------------------------------------------------------
-    
+
 async function renderProductData() {
     data = await getProductData();
 
@@ -51,7 +51,7 @@ async function renderProductData() {
     let colors = data.colors;
 
     colors.forEach(function (colors) {
-        var option = document.createElement("option");
+        let option = document.createElement("option");
         option.value = colors;
         option.innerText = colors;
         document.getElementById("colors").appendChild(option);
@@ -66,28 +66,56 @@ renderProductData()
 //--------------------------------------------------------------------------
 document.getElementById("addToCart").addEventListener("click", function () {
 
+
     let quantity = document.getElementById("quantity").value;
     let color = document.getElementById("colors").value;
 
-    if (quantity >= 1 && quantity <= 100 && color != "") {
+        if (quantity >= 1 && quantity <= 100 && color != "") {
 
-        let productInformation = {
-            id: id,
-            color: color,
-            quantity: quantity,
-            image: data.imageUrl
-        };
-// récuperer le tableau du localstorage
-// pousser le nouvel article dans le tableau 
-// seter de nouveau le localstorage avec le tableau mis à jour
+            let previousArray = localStorage.getItem("productInformation");
 
-        localStorage.setItem("productInformation", JSON.stringify(productInformation))
-        var retrievedObject = localStorage.getItem("productInformation");
-        window.alert("Votre produit à été ajouté au panier")
-        console.log("retrievedObject", JSON.parse(retrievedObject));
+            let productInformation;
+            if (previousArray) {
+                // exists
+                productInformation = JSON.parse(previousArray);
 
-    } else {
-        window.alert("Vous devez sélectioner une couleur et une quantité comprise entre 1 et 100.")
-    }
+            } else {
+                // Premier ajout au panier 
+                productInformation = [];
+            }
 
+            let isQuantityAdded = false;
+            for (let i = 0; i < productInformation.length; i++) {
+                let obj = productInformation[i];
+                if (obj['id'] === id && obj['color'] === color) {
+                    // Si le produit est déjà au panier on incrémente la quantitée 
+                    // (utilisation de parseInt pour convertir la chaine de charactère en nombre)
+                    obj['quantity'] = parseInt(obj['quantity']) + parseInt(quantity);
+                    isQuantityAdded = true;
+                    break;
+                }
+            }
+
+            if (isQuantityAdded === false) {
+                // Nouveau produit au panier 
+                productInformation.push({
+                    id: id,
+                    color: color,
+                    quantity: quantity,
+                    image: data.imageUrl,
+                    description: data.description, 
+                    alt: data.altTxt,
+                    name: data.name
+                });
+            }
+
+            let jsonArrayString = JSON.stringify(productInformation);
+            console.log(jsonArrayString);
+
+            localStorage.setItem("productInformation", jsonArrayString);
+            window.alert("Le produit à bien été ajouté au panier.")
+
+        } else {
+            window.alert("Vous devez sélectioner une couleur et une quantité comprise entre 1 et 100.")
+        }  
 });
