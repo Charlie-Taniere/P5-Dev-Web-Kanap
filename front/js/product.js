@@ -109,10 +109,10 @@ document.getElementById("addToCart").addEventListener("click", function () {
                 });
             }
 
-            let jsonArrayString = JSON.stringify(productInformation);
-            console.log(jsonArrayString);
+            let basket = JSON.stringify(productInformation);
+            console.log(basket);
 
-            localStorage.setItem("productInformation", jsonArrayString);
+            localStorage.setItem("productInformation", basket);
             window.alert("Le produit à bien été ajouté au panier.")
 
         } else {
