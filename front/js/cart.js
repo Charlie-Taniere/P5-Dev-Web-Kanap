@@ -12,7 +12,7 @@ async function renderCart() {
     basketProduct = JSON.parse(retrieveBasket);
     console.log(basketProduct);
 
-    // Boucle qui itère l'API     
+    // Boucle qui itère l'API pour récupéré le prix de chaques produits sélectionnés     
     for (let i = 0; i < basketProduct.length; i++) {
         productId = basketProduct[i];
         url = "http://localhost:3000/api/products/" + productId.id;
@@ -45,7 +45,7 @@ async function renderCart() {
                                     </div>
                                     <div class="cart__item__content__settings">
                                     <div class="cart__item__content__settings__quantity">
-                                        <p>Qté :${product.quantity} </p>
+                                        <p>Qté : ${product.quantity} </p>
                                         <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${addQuantity}">
                                     </div>
                                     <div class="cart__item__content__settings__delete">
@@ -58,19 +58,52 @@ async function renderCart() {
         html += htmlSegment;
         let container = document.querySelector("#cart__items");
         container.innerHTML = html;
+
     }
 }
 
 renderCart()
 
-window.onload = function () {
-document.getElementsByName("itemQuantity")[0].addEventListener("change", doThing);
-function doThing(){
-    alert('Horray! Someone wrote "' + this.value + '"!');
-}
+
+// Calcul des totaux 
+
+let quantityArray = basketProduct.map(x => x.quantity);
+let totalQuantity = 0;
+for (let i = 0; i < quantityArray.length; i++) {
+totalQuantity += parseInt(quantityArray[i]);
 }
 
-let itemQuantity = document.getElementsByName("itemQuantity");
-document.body.addEventListener("change", function (e) {
-let 
-});
+let priceArray = basketProduct.map(y => y.price);
+let totalPrice = 0;
+for (let i = 0; i < priceArray.length; i++) {
+totalPrice += parseInt(priceArray[i]);
+}
+
+
+console.log(totalPrice);
+
+
+
+let total = `<p>Total (<span id="totalQuantity">${totalQuantity}</span> articles) : <span id="totalPrice"><!-- 84,00 --></span> €</p>`;
+let containerTotal = document.querySelector(".cart__price");
+containerTotal.innerHTML = total;
+
+
+
+
+// let deleteProduct = document.getElementsByClassName("deleteItem").addEventListener("click", function () {
+// let deleteProductSelected = deleteProduct.closest("deleteItem");
+// });
+
+
+// window.onload = function () {
+// document.getElementsByName("itemQuantity")[0].addEventListener("change", doThing);
+// function doThing(){
+//     alert('Horray! Someone wrote "' + this.value + '"!');
+// }
+// }
+
+// let itemQuantity = document.getElementsByName("itemQuantity");
+// document.body.addEventListener("change", function (e) {
+
+// });
