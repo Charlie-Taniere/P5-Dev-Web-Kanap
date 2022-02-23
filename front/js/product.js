@@ -4,7 +4,6 @@
 
 let params = (new URL(document.location)).searchParams;
 let id = params.get('id');
-localStorage.setItem("productInformation", []);
 let data = {};
 
 //--------------------------------------------------------------------------
@@ -29,7 +28,6 @@ async function renderProductData() {
     data = await getProductData();
 
     // Déclaration des localisation des informations à implémenter
-
     const image = document.querySelector(".item__img");
     const name = document.querySelector("#title");
     const price = document.querySelector("#price");
@@ -37,7 +35,6 @@ async function renderProductData() {
 
 
     // Implémentation des informations de l'API dans le DOM 
-
     image.innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
     imageURL = data.imageUrl;
     imageAlt = data.altTxt;
@@ -47,7 +44,6 @@ async function renderProductData() {
 
 
     // Choix des couleurs   
-
     let colors = data.colors;
 
     colors.forEach(function (colors) {
@@ -59,7 +55,7 @@ async function renderProductData() {
 
 }
 
-renderProductData()
+renderProductData();
 
 //--------------------------------------------------------------------------
 // Ecoute du clic sur le panier
