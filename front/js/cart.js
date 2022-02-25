@@ -1,9 +1,6 @@
 // Récupération du localstorage
-let retrieveBasket = localStorage.getItem("productInformation");
-let basketProduct = JSON.parse(retrieveBasket);
+let basketProduct = JSON.parse(localStorage.getItem("basketInfo"));
 let totalPriceProduct = 0;
-// let product;
-
 
 // Fonction pour afficher le panier 
 async function renderCart() {
@@ -17,18 +14,18 @@ async function renderCart() {
                 if (res.ok) {
                     return res.json().then(data => {
                         product.price = data.price; // Création de la key price et récupération du prix
-                    });  
-                }  
+                    });
+                }
             })
             .catch(function (err) {
                 console.log("Une erreur est survenue")
             })
     }
-    
+
     let htmlSegment = " ";
     // Boucle pour chaque produit dans le localstorage
     for (data of basketProduct) {
-        
+
         htmlSegment += `<article class="cart__item" data-id="${data.id}" data-color="${data.color}">
                                 <div class="cart__item__img">
                                     <img src="${data.image}" alt="${data.alt}">
@@ -54,137 +51,111 @@ async function renderCart() {
         document.querySelector("#cart__items").innerHTML = htmlSegment;
     }
 
-    modifyQuantity(basketProduct); // La fonction pour modifier la quantitée est appelée ici car la fonction renderCart est asyncrone
-                   // et se charge moins vite que la fonction modifyQuantity
+    deleteItem(); // Appel de la fonction pour supprimer 
 
-    totalQuantityPrice(basketProduct) // La fonction pour calculer les totaux est appelé dans la fonction renderCart car  
-                                      // elle récupère en paramètre le localstorage avec la clé "price" en plus
+
+    calculeTotals() // Appel de la fonction pour le calculs des totaux avec le localstorage en paramètre
 }
-renderCart(); 
+
+renderCart();
 
 
-// La fonction totalQuantityPrice va calculer et prix total et la quantité de chaque produits 
-function totalQuantityPrice(basketProductWithPrice) {
-    
+// Fonction pour calculer la quantité total 
+function totalQuantity(basketProductWithQuantity) {
+
     // Calcul de la quantité total 
-    let quantityArray = basketProductWithPrice.map(x => x.quantity);
+    let quantityArray = basketProductWithQuantity.map(x => x.quantity);
     let totalQuantity = 0;
     for (let i = 0; i < quantityArray.length; i++) {
         totalQuantity += parseInt(quantityArray[i]);
     }
 
     // Rendu de la quantité total  
+    document.getElementById("totalQuantity").innerHTML = totalQuantity;
+}
 
-     document.getElementById("totalQuantity").innerHTML = totalQuantity;
+// Fonction pour calculer la prix total 
+function totalPrice(basketProductWithPrice) {
 
     // Calcul du prix total 
     let totalPrice = 0;
-    for (let i = 0; i < basketProductWithPrice.length; i++){
+    for (let i = 0; i < basketProductWithPrice.length; i++) {
         totalPrice += parseInt(basketProductWithPrice[i].price) * parseInt(basketProductWithPrice[i].quantity);
     }
 
-   // Rendu du prix total 
-        document.getElementById("totalPrice").innerHTML = totalPrice;
+    // Rendu du prix total 
+    document.getElementById("totalPrice").innerHTML = totalPrice;
 }
 
 
+// Récupération des deux fonctions de calculs 
+function calculeTotals() {
+    totalQuantity(basketProduct)
+    totalPrice(basketProduct)
+}
 
-function modifyQuantity(basketProductQuantity) {
+// Fonction pour supprimer un article
+function deleteItem() {
+    const itemToDelete = document.getElementsByClassName("cart__item"); // Récupération de l'article à supprimer
+    for (i = 0; i < itemToDelete.length; i++) { // On itère pour savoir combien d'article sont affiché
+        const x = i; // On définit x comme étant le nombre d'articles 
+        buttonDelete = itemToDelete[x].getElementsByClassName("deleteItem"); // On récupère le bouton supprimer
 
-        let itemQuantity = document.getElementsByClassName("itemQuantity");
-
-        for (let i = 0; i < itemQuantity.length; i++) {
-            itemQuantity[i].addEventListener('change', function () {
-                let productId = document.querySelectorAll("article")[i].dataset.id;
-                console.log("Produit :" + productId);
-                let quantity = itemQuantity[i].value;
-                // console.log("Quantité :" + itemQuantity[i].value);
-                // localStorage.setItem("productInformation", JSON.stringify(productId));
-                // basketProduct = JSON.parse(localStorage.getItem(productId));
-           
-                // localStorage.setItem("productInformation", productId);
-                // localStorage.setItem(, basketProduct);
-                // basketProduct.quantity = quantity;
-                
-            }); 
-            
+        buttonDelete[0].addEventListener('click', function () { // On écoute le clic sur le bouton supprimer
+            basketProduct.splice(x, 1); // On supprimer l'article du localstorage avec splice (x est sont index et 1 la quantité)
+            localStorage.setItem("basketInfo", JSON.stringify(basketProduct)); // On met à jour le localstorage
+            itemToDelete[x].remove(); // On supprime l'article du DOM 
+            location.reload(); // On recharge la en cours pour actualisé le panier 
+            window.alert("Le produit a bien été supprimé du panier");
+        })
     }
+
+    // function modifyQuantity() {
+
+    //     const collection = document.getElementsByClassName("cart__item");
+    //     for (i = 0; i < collection.length; i++) {
+    //         const x = i;
+    //         elt1 = collection[x].getElementsByClassName("deleteItem");
+    //         elt2 = collection[x].getElementsByClassName("itemQuantity");
+
+    //         elt1[0].addEventListener('click', function () { // clic sur supprimer
+    //             basketProduct.splice(x, 1);
+    //             localStorage.setItem("basketInfo", JSON.stringify(basketProduct));
+    //             collection[x].remove();
+    //             location.reload();
+    //         })
+
+    //         elt2[0].addEventListener('change', function (event) { // changement du nombre d'item
+    //             basketProduct[x].number = parseInt(event.target.value);
+    //             localStorage.setItem("basketInfo", JSON.stringify(basketProduct));
+    //             calculeTotals();
+    //         })
+    //     }
+
+
+
+
+
+    // let itemQuantity = document.getElementsByClassName("itemQuantity");
+
+    // for (let i = 0; i < itemQuantity.length; i++) {
+    //     itemQuantity[i].addEventListener('change', function () {
+    //         let productId = document.querySelectorAll("article")[i].dataset.id;
+    //         console.log("Produit :" + productId);
+    //         let quantity = itemQuantity[i].value;
+    //         console.log("Quantité :" + itemQuantity[i].value);
+    //         basketProduct.splice(4, 1, quantity);
+    //         let basketProduct = localStorage.getItem("basketInfo");
+
+    // basketProduct.quantity = quantity;
+
+    // basketProduct = JSON.parse(localStorage.getItem(productId));
+
+    // localStorage.setItem("productInformation", productId);
+    // localStorage.setItem(, basketProduct);
+    // basketProduct.quantity = quantity;
+
+    //         }); 
+
+    // }
 }
-
-
-// document.addEventListener("DOMContentLoaded", function(event) {
-//     console.log("DOM is loaded");
-//     let addQuantity = Array.from(document.getElementsByClassName("itemQuantity"));
-//     console.log(addQuantity);
-//     for (let i = 0; i < addQuantity.length; i++) {
-//         console.log(addQuantity);
-//     addQuantity[i].addEventListener('change', function(){
-//         console.log(this);
-//     });
-//     }
-
-//     });
-
-
-
-
-
-
-
-
-
-
-// Supprimer un produit
-// let buttonDeletet = document.getElementsByClassName(".deleteItem");
-
-// for (let i = 0; i < buttonDeletet.length; i++) {
-//     buttonDeletet[i].addEventListener('click', (event) => {
-//         // event.preventDefault();  
-//         console.log("hello");
-//         console.log(buttonDeletet[i]);
-//     });
-
-// };
-// console.log(buttonDeletet[i]);
-
-
-
-// document.querySelectorAll(".deleteItem").forEach(p => {
-//     p.addEventListener('click', event => {
-//      console.log("hello");
-//     })
-//   })
-
-
-//       var btn = document.getElementsByClassName('deleteItem')
-
-// for (var i = 0; i < btn.length; i++) {
-//   btn[i].addEventListener('click', function(e) {
-//     e.currentTarget.parentNode.remove();
-//     //this.closest('.single').remove() // in modern browsers in complex dom structure
-//     //this.parentNode.remove(); //this refers to the current target element 
-//     //e.target.parentNode.parentNode.removeChild(e.target.parentNode);
-//   }, false);
-// }
-
-// document.addEventListener("DOMContentLoaded", () => { // wait till all the DOM is Loaded, since querying objects at this point they are not there yet.
-// let deleteButton = document.getElementsByClassName("deleteItem"); 
-// let test = Array.from(deleteButton);
-// for (i = 0; i < test.length; i++) {
-//     console.log(test[i].id);
-//  };
-
-// if (document.readyState == 'loading') {
-//     document.addEventListener('DOMContentLoaded',execute);
-// }else{
-//     execute();
-// }
-// function execute() {
-//     const btns = document.getElementsByClassName('deleteItem');
-//     for(let i = 0; i < btns.length; i++){
-//         btns[i].addEventListener('click',function(){
-//             console.log('button index : '+i);
-//         });
-//     }
-// }
-// execute();

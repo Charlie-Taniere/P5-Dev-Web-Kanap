@@ -68,21 +68,21 @@ document.getElementById("addToCart").addEventListener("click", function () {
 
         if (quantity >= 1 && quantity <= 100 && color != "") {
 
-            let previousArray = localStorage.getItem("productInformation");
+            let previousArray = localStorage.getItem("basketInfo");
 
-            let productInformation;
+            let basketInfo;
             if (previousArray) {
                 // exists
-                productInformation = JSON.parse(previousArray);
+                basketInfo = JSON.parse(previousArray);
 
             } else {
                 // Premier ajout au panier 
-                productInformation = [];
+                basketInfo = [];
             }
 
             let isQuantityAdded = false;
-            for (let i = 0; i < productInformation.length; i++) {
-                let obj = productInformation[i];
+            for (let i = 0; i < basketInfo.length; i++) {
+                let obj = basketInfo[i];
                 if (obj['id'] === id && obj['color'] === color) {
                     // Si le produit est déjà au panier on incrémente la quantitée 
                     // (utilisation de parseInt pour convertir la chaine de charactère en nombre)
@@ -94,7 +94,7 @@ document.getElementById("addToCart").addEventListener("click", function () {
 
             if (isQuantityAdded === false) {
                 // Nouveau produit au panier 
-                productInformation.push({
+                basketInfo.push({
                     id: id,
                     color: color,
                     quantity: quantity,
@@ -105,10 +105,10 @@ document.getElementById("addToCart").addEventListener("click", function () {
                 });
             }
 
-            let basket = JSON.stringify(productInformation);
-            console.log(basket);
+            let myBasket = JSON.stringify(basketInfo);
+            console.log(myBasket);
 
-            localStorage.setItem("productInformation", basket);
+            localStorage.setItem("basketInfo", myBasket);
             window.alert("Le produit à bien été ajouté au panier.")
 
         } else {
