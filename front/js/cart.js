@@ -2,7 +2,7 @@
 let retrieveBasket = localStorage.getItem("productInformation");
 let basketProduct = JSON.parse(retrieveBasket);
 let totalPriceProduct = 0;
-let product;
+// let product;
 
 
 // Fonction pour afficher le panier 
@@ -54,7 +54,7 @@ async function renderCart() {
         document.querySelector("#cart__items").innerHTML = htmlSegment;
     }
 
-    modifyQuantity(); // La fonction pour modifier la quantitée est appelée ici car la fonction renderCart est asyncrone
+    modifyQuantity(basketProduct); // La fonction pour modifier la quantitée est appelée ici car la fonction renderCart est asyncrone
                    // et se charge moins vite que la fonction modifyQuantity
 
     totalQuantityPrice(basketProduct) // La fonction pour calculer les totaux est appelé dans la fonction renderCart car  
@@ -74,32 +74,40 @@ function totalQuantityPrice(basketProductWithPrice) {
     }
 
     // Rendu de la quantité total  
-    let totalQuantityRender = `${totalQuantity}`;
-    let containerTotalQuantity = document.getElementById("totalQuantity");
-    containerTotalQuantity.innerHTML = totalQuantityRender;
+
+     document.getElementById("totalQuantity").innerHTML = totalQuantity;
 
     // Calcul du prix total 
     let totalPrice = 0;
     for (let i = 0; i < basketProductWithPrice.length; i++){
-        totalPrice += basketProductWithPrice[i].price * basketProductWithPrice[i].quantity;
+        totalPrice += parseInt(basketProductWithPrice[i].price) * parseInt(basketProductWithPrice[i].quantity);
     }
 
    // Rendu du prix total 
-        let containerTotal = document.getElementById("totalPrice");
-        containerTotal.innerHTML = totalPrice;
+        document.getElementById("totalPrice").innerHTML = totalPrice;
 }
 
 
-function modifyQuantity() {
 
-        let addQuantity = document.getElementsByClassName("itemQuantity");
-        console.log(addQuantity);
-        for (let i = 0; i < addQuantity.length; i++) {
-            addQuantity[i].addEventListener('change', function () {
-               // console.log(addQuantity.length);
-                console.log("hello")
+function modifyQuantity(basketProductQuantity) {
+
+        let itemQuantity = document.getElementsByClassName("itemQuantity");
+
+        for (let i = 0; i < itemQuantity.length; i++) {
+            itemQuantity[i].addEventListener('change', function () {
+                let productId = document.querySelectorAll("article")[i].dataset.id;
+                console.log("Produit :" + productId);
+                let quantity = itemQuantity[i].value;
+                // console.log("Quantité :" + itemQuantity[i].value);
+                // localStorage.setItem("productInformation", JSON.stringify(productId));
+                // basketProduct = JSON.parse(localStorage.getItem(productId));
+           
+                // localStorage.setItem("productInformation", productId);
+                // localStorage.setItem(, basketProduct);
+                // basketProduct.quantity = quantity;
+                
+            }); 
             
-            });
     }
 }
 
