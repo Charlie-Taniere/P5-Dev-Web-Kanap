@@ -51,14 +51,12 @@ async function renderCart() {
         document.querySelector("#cart__items").innerHTML = htmlSegment;
     }
 
-    deleteItem(); // Appel de la fonction pour supprimer 
-
-
-    calculeTotals() // Appel de la fonction pour le calculs des totaux avec le localstorage en paramètre
+    calculeTotals(); // Appel de la fonction pour le calculs des totaux avec le localstorage en paramètre
+    deleteItem(); // Appel de la fonction pour supprimer un article 
+    modifyQuantity(); // Appel de la fonction pour modifier la quantitée d'un article 
 }
 
 renderCart();
-
 
 // Fonction pour calculer la quantité total 
 function totalQuantity(basketProductWithQuantity) {
@@ -74,6 +72,7 @@ function totalQuantity(basketProductWithQuantity) {
     document.getElementById("totalQuantity").innerHTML = totalQuantity;
 }
 
+
 // Fonction pour calculer la prix total 
 function totalPrice(basketProductWithPrice) {
 
@@ -86,7 +85,6 @@ function totalPrice(basketProductWithPrice) {
     // Rendu du prix total 
     document.getElementById("totalPrice").innerHTML = totalPrice;
 }
-
 
 // Récupération des deux fonctions de calculs 
 function calculeTotals() {
@@ -105,57 +103,108 @@ function deleteItem() {
             basketProduct.splice(x, 1); // On supprimer l'article du localstorage avec splice (x est sont index et 1 la quantité)
             localStorage.setItem("basketInfo", JSON.stringify(basketProduct)); // On met à jour le localstorage
             itemToDelete[x].remove(); // On supprime l'article du DOM 
-            location.reload(); // On recharge la en cours pour actualisé le panier 
+            // location.reload(); 
             window.alert("Le produit a bien été supprimé du panier");
         })
     }
-
-    // function modifyQuantity() {
-
-    //     const collection = document.getElementsByClassName("cart__item");
-    //     for (i = 0; i < collection.length; i++) {
-    //         const x = i;
-    //         elt1 = collection[x].getElementsByClassName("deleteItem");
-    //         elt2 = collection[x].getElementsByClassName("itemQuantity");
-
-    //         elt1[0].addEventListener('click', function () { // clic sur supprimer
-    //             basketProduct.splice(x, 1);
-    //             localStorage.setItem("basketInfo", JSON.stringify(basketProduct));
-    //             collection[x].remove();
-    //             location.reload();
-    //         })
-
-    //         elt2[0].addEventListener('change', function (event) { // changement du nombre d'item
-    //             basketProduct[x].number = parseInt(event.target.value);
-    //             localStorage.setItem("basketInfo", JSON.stringify(basketProduct));
-    //             calculeTotals();
-    //         })
-    //     }
-
-
-
-
-
-    // let itemQuantity = document.getElementsByClassName("itemQuantity");
-
-    // for (let i = 0; i < itemQuantity.length; i++) {
-    //     itemQuantity[i].addEventListener('change', function () {
-    //         let productId = document.querySelectorAll("article")[i].dataset.id;
-    //         console.log("Produit :" + productId);
-    //         let quantity = itemQuantity[i].value;
-    //         console.log("Quantité :" + itemQuantity[i].value);
-    //         basketProduct.splice(4, 1, quantity);
-    //         let basketProduct = localStorage.getItem("basketInfo");
-
-    // basketProduct.quantity = quantity;
-
-    // basketProduct = JSON.parse(localStorage.getItem(productId));
-
-    // localStorage.setItem("productInformation", productId);
-    // localStorage.setItem(, basketProduct);
-    // basketProduct.quantity = quantity;
-
-    //         }); 
-
-    // }
 }
+
+// Fonction pour modifier la quantitée d'un article
+function modifyQuantity() {
+
+    const itemToChangeQuantity = document.getElementsByClassName("cart__item"); // Récupération de l'article 
+    for (i = 0; i < itemToChangeQuantity.length; i++) { // On itère pour savoir combien d'article sont affiché
+        const y = i; // On définit y comme étant le nombre d'articles 
+
+        buttonChangeQuantity = itemToChangeQuantity[y].getElementsByClassName("itemQuantity"); // On récupère l'input pour changer  de quantité
+
+        buttonChangeQuantity[0].addEventListener('change', function (event) { // On écoute le changement de valeur
+
+            // On récupère la localisation du clic avec event.target et on le définit comme étant la quantité du produit du localstorage associé
+            
+ // ajouter étape pour vérifier si la quantité n'est pas sup à 100 
+
+            basketProduct[y].quantity = parseInt(event.target.value);
+
+            if (basketProduct[y].quantity >= 1 && basketProduct[y].quantity <= 100) {
+                localStorage.setItem("basketInfo", JSON.stringify(basketProduct)); // On met à jour le localstorage
+                window.alert("La quantitée du produit " + basketProduct[y].name + " est passé à " + basketProduct[y].quantity);
+            } else {
+                window.alert("La quantitée du produit doit être comprise entre 1 et 100.");
+            }
+            calculeTotals();
+        })
+    }
+}
+
+// Fonction pour vérifier tous les champs pour passer la commande 
+function checkForm(test) {
+// On définit les différents Regex pour les différements éléments attendus  
+    let emailRegex = RegExp("^(.+)@(.+)$");
+    let adresseRegex = RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
+    let cityRegex = RegExp("^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$");
+    let namesRegex = RegExp("^[a-zA-Z ,.'-]+$");
+
+// On met à zéro les messages d'érreurs 
+    document.getElementById('firstNameErrorMsg').innerText = ""; 
+    document.getElementById('lastNameErrorMsg').innerText = "";
+    document.getElementById('addressErrorMsg').innerText = "";
+    document.getElementById('cityErrorMsg').innerText = "";
+    document.getElementById('emailErrorMsg').innerText = "";
+
+// On vérifie pour chaques input si    
+    let validFirstName = test.firstName;
+    if (!namesRegex.test(validFirstName)) {
+        let firstNameErrorMsg = document.getElementById('firstNameErrorMsg');
+        firstNameErrorMsg.innerText = "Veuillez renseigner un prénom valide";
+        return false;
+    } 
+    
+    let validLastName = test.lastName;
+    if (!namesRegex.test(validLastName)) {
+        let firstNameErrorMsg = document.getElementById('lastNameErrorMsg');
+        firstNameErrorMsg.innerText = "Veuillez renseigner un nom valide";
+        return false;
+    } 
+    let validAddress = test.address;
+    if (!adresseRegex.test(validAddress)) {
+        let firstNameErrorMsg = document.getElementById('addressErrorMsg');
+        firstNameErrorMsg.innerText = "Veuillez renseigner une adresse valide";
+        return false;
+    } 
+
+    let validCity = test.city;
+    if (!cityRegex.test(validCity)) {
+        let firstNameErrorMsg = document.getElementById('cityErrorMsg');
+        firstNameErrorMsg.innerText = "Veuillez renseigner une ville valide";
+        return false;
+    } 
+    let validEmail = test.email;
+    if (!emailRegex.test(validEmail)) {
+        let firstNameErrorMsg = document.getElementById('emailErrorMsg');
+        firstNameErrorMsg.innerText = "Veuillez renseigner une adresse mail valide";
+        return false;
+    } else {
+        return true;
+    }
+};
+
+
+function getUserForm() {
+    let userContactForm;
+    const order = document.getElementById("order");
+    order.addEventListener("click", (event) => {
+        event.preventDefault();
+            userContactForm = {
+            firstName : document.getElementById("firstName").value,
+            lastName : document.getElementById("lastName").value,
+            address : document.getElementById("address").value,
+            city : document.getElementById("city").value,
+            email : document.getElementById("email").value,
+        }
+        console.log(userContactForm);  
+        checkForm(userContactForm); 
+    });
+};
+getUserForm()
+
