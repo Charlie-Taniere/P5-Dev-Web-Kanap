@@ -191,30 +191,32 @@ function checkForm(test) {
 
 
 function getUserForm() {
-    let userContactForm;
+    let contact;
     const order = document.getElementById("order");
     order.addEventListener("click", (event) => {
         event.preventDefault();
-        userContactForm = {
+        contact = {
             firstName: document.getElementById("firstName").value,
             lastName: document.getElementById("lastName").value,
             address: document.getElementById("address").value,
             city: document.getElementById("city").value,
             email: document.getElementById("email").value,
         }
-        if (checkForm(userContactForm)) { // On vérifit que le formulaire soit bien rempli 
-            if (userContactForm != null) {
+        if (checkForm(contact)) { // On vérifit que le formulaire est complet 
+            if (contact != null) { // Deuxième vérification pour le formulaire
                 if (basketProduct.length < 1) { // On vérifit que le panier ne soit pas vide 
                     window.alert("Votre panier est vide");
                 } else {
-                    let basketProduct = JSON.parse(localStorage.getItem("basketInfo"));
+                    products = JSON.parse(localStorage.getItem("basketInfo"));
+
                     let productId = [];
                     for (product of basketProduct) {
                         productId.push(product.id)
                     }
+
                     let dataUser = {
-                        userContactForm,
-                        basketProduct: productId,
+                        contact,
+                        products: productId,
                     };
                     console.log(dataUser);
 
@@ -222,20 +224,29 @@ function getUserForm() {
                         method: "POST",
                         body: JSON.stringify(dataUser),
                         headers: {
+                            "Accept": "application/json", 
                             "Content-Type": "application/json",
                         },
                     };
+                    console.log(dataUser);
 
                     fetch("http://localhost:3000/api/products/order", options)
                         .then(response => response.json())
                         .then(data => {
+                            console.log(data);
                             localStorage.setItem("orderId", data.orderId);
+                            console.log(data);
                                 document.location.href = "confirmation.html?id=" + data.orderId;
+                        })
+                        .catch((err) => {
+                            alert ("Oups, le serveur rencontre un problème." + err);
                         });
                 }
             } else {
-                return null;
+                alert("Veuillez vérifier que le formulaire est bien rempli.")
             }
+        } else {
+            return null
         }
 
     });
