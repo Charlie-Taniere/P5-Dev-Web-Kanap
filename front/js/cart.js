@@ -103,7 +103,7 @@ function deleteItem() {
             basketProduct.splice(x, 1); // On supprimer l'article du localstorage avec splice (x est sont index et 1 la quantité)
             localStorage.setItem("basketInfo", JSON.stringify(basketProduct)); // On met à jour le localstorage
             itemToDelete[x].remove(); // On supprime l'article du DOM 
-            // location.reload(); 
+            location.reload(); // Rafraichit et met à jour 
             window.alert("Le produit a bien été supprimé du panier");
         })
     }
@@ -121,8 +121,8 @@ function modifyQuantity() {
         buttonChangeQuantity[0].addEventListener('change', function (event) { // On écoute le changement de valeur
 
             // On récupère la localisation du clic avec event.target et on le définit comme étant la quantité du produit du localstorage associé
-            
- // ajouter étape pour vérifier si la quantité n'est pas sup à 100 
+
+            // ajouter étape pour vérifier si la quantité n'est pas sup à 100 
 
             basketProduct[y].quantity = parseInt(event.target.value);
 
@@ -139,46 +139,46 @@ function modifyQuantity() {
 
 // Fonction pour vérifier tous les champs pour passer la commande 
 function checkForm(test) {
-// On définit les différents Regex pour les différements éléments attendus  
+    // On définit les différents Regex pour les différements éléments attendus  
     let emailRegex = RegExp("^(.+)@(.+)$");
     let adresseRegex = RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
     let cityRegex = RegExp("^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$");
     let namesRegex = RegExp("^[a-zA-Z ,.'-]+$");
 
-// On met à zéro les messages d'érreurs 
-    document.getElementById('firstNameErrorMsg').innerText = ""; 
+    // On met à zéro les messages d'érreurs 
+    document.getElementById('firstNameErrorMsg').innerText = "";
     document.getElementById('lastNameErrorMsg').innerText = "";
     document.getElementById('addressErrorMsg').innerText = "";
     document.getElementById('cityErrorMsg').innerText = "";
     document.getElementById('emailErrorMsg').innerText = "";
 
-// On vérifie pour chaques input si    
+    // On vérifie pour chaques input si    
     let validFirstName = test.firstName;
     if (!namesRegex.test(validFirstName)) {
         let firstNameErrorMsg = document.getElementById('firstNameErrorMsg');
         firstNameErrorMsg.innerText = "Veuillez renseigner un prénom valide";
         return false;
-    } 
-    
+    }
+
     let validLastName = test.lastName;
     if (!namesRegex.test(validLastName)) {
         let firstNameErrorMsg = document.getElementById('lastNameErrorMsg');
         firstNameErrorMsg.innerText = "Veuillez renseigner un nom valide";
         return false;
-    } 
+    }
     let validAddress = test.address;
     if (!adresseRegex.test(validAddress)) {
         let firstNameErrorMsg = document.getElementById('addressErrorMsg');
         firstNameErrorMsg.innerText = "Veuillez renseigner une adresse valide";
         return false;
-    } 
+    }
 
     let validCity = test.city;
     if (!cityRegex.test(validCity)) {
         let firstNameErrorMsg = document.getElementById('cityErrorMsg');
         firstNameErrorMsg.innerText = "Veuillez renseigner une ville valide";
         return false;
-    } 
+    }
     let validEmail = test.email;
     if (!emailRegex.test(validEmail)) {
         let firstNameErrorMsg = document.getElementById('emailErrorMsg');
@@ -195,16 +195,51 @@ function getUserForm() {
     const order = document.getElementById("order");
     order.addEventListener("click", (event) => {
         event.preventDefault();
-            userContactForm = {
-            firstName : document.getElementById("firstName").value,
-            lastName : document.getElementById("lastName").value,
-            address : document.getElementById("address").value,
-            city : document.getElementById("city").value,
-            email : document.getElementById("email").value,
+        userContactForm = {
+            firstName: document.getElementById("firstName").value,
+            lastName: document.getElementById("lastName").value,
+            address: document.getElementById("address").value,
+            city: document.getElementById("city").value,
+            email: document.getElementById("email").value,
         }
-        console.log(userContactForm);  
-        checkForm(userContactForm); 
+        if (checkForm(userContactForm)) { // On vérifit que le formulaire soit bien rempli 
+            if (userContactForm != null) {
+                if (basketProduct.length < 1) { // On vérifit que le panier ne soit pas vide 
+                    window.alert("Votre panier est vide");
+                } else {
+                    let basketProduct = JSON.parse(localStorage.getItem("basketInfo"));
+                    let productId = [];
+                    for (product of basketProduct) {
+                        productId.push(product.id)
+                    }
+                    let dataUser = {
+                        userContactForm,
+                        basketProduct: productId,
+                    };
+                    console.log(dataUser);
+
+                    const options = {
+                        method: "POST",
+                        body: JSON.stringify(dataUser),
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    };
+
+                    fetch("http://localhost:3000/api/products/order", options)
+                        .then(response => response.json())
+                        .then(data => {
+                            localStorage.setItem("orderId", data.orderId);
+                                document.location.href = "confirmation.html?id=" + data.orderId;
+                        });
+                }
+            } else {
+                return null;
+            }
+        }
+
     });
+
+
 };
 getUserForm()
-
