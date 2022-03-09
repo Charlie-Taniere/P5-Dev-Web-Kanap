@@ -42,7 +42,6 @@ async function renderProductData() {
     price.innerHTML = `${data.price}`;
     description.innerHTML = `${data.description}`;
 
-
     // Choix des couleurs   
     let colors = data.colors;
 
@@ -62,56 +61,52 @@ renderProductData();
 //--------------------------------------------------------------------------
 document.getElementById("addToCart").addEventListener("click", function () {
 
-
     let quantity = document.getElementById("quantity").value;
     let color = document.getElementById("colors").value;
 
-        if (quantity >= 1 && quantity <= 100 && color != "") {
-
-            let previousArray = localStorage.getItem("basketInfo");
-
-            let basketInfo;
-            if (previousArray) {
-                // exists
-                basketInfo = JSON.parse(previousArray);
-
-            } else {
-                // Premier ajout au panier 
-                basketInfo = [];
-            }
-
-            let isQuantityAdded = false;
-            for (let i = 0; i < basketInfo.length; i++) {
-                let obj = basketInfo[i];
-                if (obj['id'] === id && obj['color'] === color) {
-                    // Si le produit est déjà au panier on incrémente la quantitée 
-                    // (utilisation de parseInt pour convertir la chaine de charactère en nombre)
-                    obj['quantity'] = parseInt(obj['quantity']) + parseInt(quantity);
-                    isQuantityAdded = true;
-                    break;
-                }
-            }
-
-            if (isQuantityAdded === false) {
-                // Nouveau produit au panier 
-                basketInfo.push({
-                    id: id,
-                    color: color,
-                    quantity: quantity,
-                    image: data.imageUrl,
-                    description: data.description, 
-                    alt: data.altTxt,
-                    name: data.name
-                });
-            }
-
-            let myBasket = JSON.stringify(basketInfo);
-            console.log(myBasket);
-
-            localStorage.setItem("basketInfo", myBasket);
-            window.alert("Le produit à bien été ajouté au panier.")
-
+    if (quantity >= 1 && quantity <= 100 && color != "") {
+        let previousArray = localStorage.getItem("basketInfo");
+        let basketInfo;
+        
+        if (previousArray) {
+            basketInfo = JSON.parse(previousArray);
         } else {
-            window.alert("Vous devez sélectioner une couleur et une quantité comprise entre 1 et 100.")
-        }  
+            // Premier ajout au panier 
+            basketInfo = [];
+        }
+
+        let isQuantityAdded = false;
+        for (let i = 0; i < basketInfo.length; i++) {
+            let obj = basketInfo[i];
+            if (obj['id'] === id && obj['color'] === color) {
+                // Si le produit est déjà au panier on incrémente la quantitée 
+                // (utilisation de parseInt pour convertir la chaine de charactère en nombre)
+                obj['quantity'] = parseInt(obj['quantity']) + parseInt(quantity);
+                isQuantityAdded = true;
+                break;
+            }
+        }
+
+        if (isQuantityAdded === false) {
+            // Nouveau produit au panier 
+            basketInfo.push({
+                id: id,
+                color: color,
+                quantity: quantity,
+                image: data.imageUrl,
+                description: data.description,
+                alt: data.altTxt,
+                name: data.name
+            });
+        }
+
+        let myBasket = JSON.stringify(basketInfo);
+        console.log(myBasket);
+
+        localStorage.setItem("basketInfo", myBasket);
+        window.alert("Le produit à bien été ajouté au panier.")
+
+    } else {
+        window.alert("Vous devez sélectioner une couleur et une quantité comprise entre 1 et 100.")
+    }
 });
