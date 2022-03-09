@@ -3,11 +3,11 @@
 //--------------------------------------------------------------------------
 
 async function getData() {
-    let url = "http://localhost:3000/api/products"; // on définit l'url de l'API dans une variable 
+    let url = "http://localhost:3000/api/products";
     try {
-        let res = await fetch(url); //
+        let res = await fetch(url);
         return await res.json();
-    } catch (error) {               
+    } catch (error) {
         console.log(error);
     }
 }
@@ -17,7 +17,7 @@ async function getData() {
 //--------------------------------------------------------------------------
 
 async function renderData() {
-    let data = await getData(); // on définit que data 
+    let data = await getData();
     let htmlSegment = " ";
     data.forEach(data => {
         htmlSegment += `<a href="./product.html?id=${data._id}">
@@ -28,7 +28,7 @@ async function renderData() {
                             </article>
                             </a>`;
     });
-    document.querySelector("#items").innerHTML = htmlSegment;  
+    document.querySelector("#items").innerHTML = htmlSegment;
 }
 
 renderData();
