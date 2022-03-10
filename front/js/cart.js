@@ -21,14 +21,13 @@ async function renderCart() {
                 }
             })
             .catch(function (err) {
-                console.log("Une erreur est survenue")
+                console.log("Une erreur est survenue" + err)
             })
     }
 
     let htmlSegment = " ";
     // Boucle pour chaque produit dans le localstorage
     for (data of basketProduct) {
-
         htmlSegment += `<article class="cart__item" data-id="${data.id}" data-color="${data.color}">
                                 <div class="cart__item__img">
                                     <img src="${data.image}" alt="${data.alt}">
@@ -54,7 +53,7 @@ async function renderCart() {
         document.querySelector("#cart__items").innerHTML = htmlSegment;
     }
 
-    calculeTotals(); // Appel de la fonction pour le calculs des totaux avec le localstorage en paramètre
+    calculeTotals(); // Appel de la fonction pour le calculs des totaux
     deleteItem(); // Appel de la fonction pour supprimer un article 
     modifyQuantity(); // Appel de la fonction pour modifier la quantitée d'un article 
 }
@@ -131,13 +130,10 @@ function modifyQuantity() {
         const y = i;
 
         let buttonChangeQuantity = itemToChangeQuantity[y].getElementsByClassName("itemQuantity");
-
         buttonChangeQuantity[0].addEventListener('change', function (event) {
-
             basketProduct[y].quantity = parseInt(event.target.value);
 
             if (buttonChangeQuantity[0].value <= 100 && buttonChangeQuantity[0].value >= 1) {
-
                 if (basketProduct[y].quantity >= 1 && basketProduct[y].quantity <= 100) {
                     localStorage.setItem("basketInfo", JSON.stringify(basketProduct)); // On met à jour le localstorage
                     window.alert("La quantitée du produit " + basketProduct[y].name + " est passé à " + basketProduct[y].quantity);
@@ -163,8 +159,8 @@ function checkForm(test) {
     // On définit les différents Regex pour les différements éléments attendus  
     let emailRegex = RegExp("^(.+)@(.+)$");
     let adresseRegex = RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
-    let cityRegex = RegExp("^[a-zA-Z',.\s-]{1,25}$");
-    let namesRegex = RegExp("^[a-zA-Z ,.'-]+$");
+    let cityRegex = RegExp("^[a-zA-Z-Zàâäéèêëïîôöùûüç ,.'-]+$");
+    let namesRegex = RegExp("^[a-zA-Z-Zàâäéèêëïîôöùûüç ,.'-]+$");
 
     // On met à zéro les messages d'érreurs 
     document.getElementById('firstNameErrorMsg').innerText = "";
@@ -214,7 +210,7 @@ function checkForm(test) {
 // Fonction qui récupère le formulaire de contact, le panier et redirige vers la page confirmation
 // --------------------------------------------------
 
-function getUserForm() {
+function userFormAndOrder() {
     let contact;
     const order = document.getElementById("order");
     order.addEventListener("click", (event) => {
@@ -269,4 +265,5 @@ function getUserForm() {
     });
 };
 
-getUserForm()
+userFormAndOrder()
+

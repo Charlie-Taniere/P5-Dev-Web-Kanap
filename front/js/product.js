@@ -80,7 +80,6 @@ document.getElementById("addToCart").addEventListener("click", function () {
             let obj = basketInfo[i];
             if (obj['id'] === id && obj['color'] === color) {
                 // Si le produit est déjà au panier on incrémente la quantitée 
-                // (utilisation de parseInt pour convertir la chaine de charactère en nombre)
                 obj['quantity'] = parseInt(obj['quantity']) + parseInt(quantity);
                 isQuantityAdded = true;
                 break;
@@ -102,7 +101,6 @@ document.getElementById("addToCart").addEventListener("click", function () {
 
         let myBasket = JSON.stringify(basketInfo);
         console.log(myBasket);
-
         localStorage.setItem("basketInfo", myBasket);
         window.alert("Le produit à bien été ajouté au panier.")
 
