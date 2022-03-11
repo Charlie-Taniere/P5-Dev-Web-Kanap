@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------------
 
 let params = (new URL(document.location)).searchParams;
-let id = params.get('id');
+let id = params.get("id");
 let data = {};
 
 //--------------------------------------------------------------------------
@@ -78,9 +78,9 @@ document.getElementById("addToCart").addEventListener("click", function () {
         let isQuantityAdded = false;
         for (let i = 0; i < basketInfo.length; i++) {
             let obj = basketInfo[i];
-            if (obj['id'] === id && obj['color'] === color) {
+            if (obj["id"] === id && obj["color"] === color) {
                 // Si le produit est déjà au panier on incrémente la quantitée 
-                obj['quantity'] = parseInt(obj['quantity']) + parseInt(quantity);
+                obj["quantity"] = parseInt(obj["quantity"]) + parseInt(quantity);
                 isQuantityAdded = true;
                 break;
             }
