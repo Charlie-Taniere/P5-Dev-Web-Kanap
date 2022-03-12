@@ -125,12 +125,6 @@ function deleteItem() {
 
 function modifyQuantity() {
 
-    const clone = Object.assign(basketProduct);
-    for (i = 0; i < clone.length; i++) {
-    const c = i; 
-    delete clone[c].price;
-    };
-
     const itemToChangeQuantity = document.getElementsByClassName("cart__item");
     for (i = 0; i < itemToChangeQuantity.length; i++) {
         const y = i;
@@ -140,15 +134,14 @@ function modifyQuantity() {
             basketProduct[y].quantity = parseInt(event.target.value);
 
             if (buttonChangeQuantity[0].value <= 100 && buttonChangeQuantity[0].value >= 1) {
-                    localStorage.basketInfo = JSON.stringify(clone); // On met à jour le localstorage sans le prix 
+                    localStorage.setItem("basketInfo", JSON.stringify(basketProduct)); // On met à jour le localstorage sans le prix 
                     window.alert("La quantitée du produit " + basketProduct[y].name + " est passé à " + basketProduct[y].quantity);
             } else {
                 alert("La quantitée du produit doit être comprise entre 1 et 100.");
                 buttonChangeQuantity[0].value = 1;
                 basketProduct[y].quantity = 1;
-                localStorage.basketInfo = JSON.stringify(clone);
+                localStorage.setItem("basketInfo", JSON.stringify(basketProduct));
             }
-            location.reload();
             calculeTotals();
         })
     }
